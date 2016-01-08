@@ -1,4 +1,4 @@
-package eu.ydp.idea.ts.spec.generator.actions;
+package eu.ydp.idea.ts.spec.generator;
 
 import org.apache.commons.lang.StringUtils;
 
