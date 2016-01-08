@@ -1,0 +1,40 @@
+<idea-plugin version="2">
+  <id>eu.ydp.idea.tsSpecGenerator</id>
+  <name>TypeScript spec file generator / navigator</name>
+  <version>0.1</version>
+  <vendor email="mkuster@ydp.eu" url="http://www.ydp.eu">Young Digital Planet</vendor>
+
+  <description><![CDATA[
+      Type script spec file generator / navigator.
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Basic spec file code generation if file not exists<br>
+      Navigation to spec file if already exists<br>
+      Navigation to class file if used in spec file<br>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+  <idea-version since-build="139.0"/>
+
+  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+  <depends>com.intellij.modules.lang</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <actions>
+    <!-- Add your actions here -->
+    <action id="tsGenerateSpec" class="eu.ydp.idea.ts.spec.generator.actions.GenerateSpecAction" text="Generate or navigate to spec file"
+            description="Generates spec file for ts class">
+      <add-to-group group-id="CodeMenu" anchor="last"/>
+    </action>
+  </actions>
+
+</idea-plugin>
