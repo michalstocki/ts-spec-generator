@@ -24,7 +24,7 @@ public class SpecGenerator {
         }
     }
 
-    private String TEMPLATE = "/// <reference path=\"$TestsRelativePath$references.ts\" />\n" +
+    public static String TEMPLATE = "/// <reference path=\"$TestsRelativePath$references.ts\" />\n" +
             "import {SingleUnitIsolator} from '$TestsRelativePath$utils/mocking/SingleUnitIsolator';\n" +
             "import {$ClassName$} from '$TestsRelativePath$../src/$classRelativePath$/$ClassName$';\n" +
             "\n" +

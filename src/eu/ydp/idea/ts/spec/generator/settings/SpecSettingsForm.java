@@ -2,6 +2,7 @@ package eu.ydp.idea.ts.spec.generator.settings;
 
 import com.intellij.ide.highlighter.HighlighterFactory;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
@@ -12,6 +13,7 @@ import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.fileTypes.UnknownFileType;
+import com.intellij.openapi.util.Computable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,6 +29,25 @@ public class SpecSettingsForm implements Disposable {
 
     public JComponent getComponent() {
         return rootPanel;
+    }
+
+    public String getSpecTemplate() {
+        String specTemplate = "";
+        if (myEditor != null && !myEditor.isDisposed()) {
+            specTemplate = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+                @Override
+                public String compute() {
+                    return myEditor.getDocument().getText();
+                }
+            });
+        }
+        return specTemplate;
+    }
+
+    public void setSpecTemplate(String specTemplate) {
+        if (myEditor != null && !myEditor.isDisposed()) {
+            ApplicationManager.getApplication().runWriteAction(() -> myEditor.getDocument().setText(specTemplate));
+        }
     }
 
     @Override
