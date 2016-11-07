@@ -16,7 +16,7 @@ public class SpecGenerator {
             "  let $ObjName$:$ClassName$;\n" +
             "\n" +
             "  beforeEach(() => {\n" +
-            "    $ObjName$ = isolator.get($ClassName$);\n" +
+            "    $ObjName$ = new $ClassName$();\n" +
             "  });\n" +
             "\n" +
             "  describe('', () => {\n" +
