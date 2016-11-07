@@ -1,17 +1,27 @@
 <idea-plugin version="2">
   <id>eu.ydp.idea.tsSpecGenerator</id>
   <name>TypeScript spec file generator / navigator</name>
-  <version>0.1</version>
-  <vendor email="mkuster@ydp.eu" url="http://www.ydp.eu">Young Digital Planet</vendor>
+  <version>0.2</version>
+  <vendor email="mstocki@ydp.eu" url="http://www.ydp.eu">Young Digital Planet</vendor>
 
   <description><![CDATA[
-      Type script spec file generator / navigator.
+      TypeScript test file generator / navigator.
     ]]></description>
 
   <change-notes><![CDATA[
-      Basic spec file code generation if file not exists<br>
-      Navigation to spec file if already exists<br>
-      Navigation to class file if used in spec file<br>
+      <strong>0.2</strong>
+      <ul>
+      <li>Introducing a settings panel</li>
+      <li>Editing a template of the generate spec file for a project</li>
+      <li>User-defined template supports several variables</li>
+      </ul>
+
+      <strong>0.1</strong>
+      <ul>
+      <li>Basic spec file code generation if file not exists</li>
+      <li>Navigation to a spec file if already exists</li>
+      <li>Navigation to class file if the action used in a spec file</li>
+      </ul>
     ]]>
   </change-notes>
 
