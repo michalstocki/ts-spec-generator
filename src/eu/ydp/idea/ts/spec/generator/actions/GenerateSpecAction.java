@@ -31,7 +31,8 @@ public class GenerateSpecAction extends AnAction {
             targetSpecFilePath = targetSpecFilePath.substring(0, targetSpecFilePath.length() - 3) + ".spec.ts";
             File specFile = new File(targetSpecFilePath);
             if (!specFile.exists()) {
-                if(new SpecGenerator(project).generate(specFile, editorFileRelativePath)) {
+                (new File(specFile.getParent())).mkdirs();
+                if (new SpecGenerator(project).generate(specFile, editorFileRelativePath)) {
                     VirtualFileManager.getInstance().syncRefresh();
                     editorFileNavigator.navigateTo(targetSpecFilePath);
                 }
