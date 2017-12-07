@@ -20,23 +20,33 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.awt.*;
 
-public class SpecSettingsForm implements Disposable {
+public class SpecSettingsForm implements Disposable
+{
     private JPanel rootPanel;
     private JPanel myEditorPanel;
+    private JTextField testSpecTextField;
+    private JLabel lblSpecPath;
+    private JTextField sourcePathTextfield;
+    private JLabel lblSourcePath;
 
     @Nullable
     private Editor myEditor;
 
-    public JComponent getComponent() {
+    public JComponent getComponent()
+    {
         return rootPanel;
     }
 
-    public String getSpecTemplate() {
+    public String getSpecTemplate()
+    {
         String specTemplate = "";
-        if (myEditor != null && !myEditor.isDisposed()) {
-            specTemplate = ApplicationManager.getApplication().runReadAction(new Computable<String>() {
+        if (myEditor != null && !myEditor.isDisposed())
+        {
+            specTemplate = ApplicationManager.getApplication().runReadAction(new Computable<String>()
+            {
                 @Override
-                public String compute() {
+                public String compute()
+                {
                     return myEditor.getDocument().getText();
                 }
             });
@@ -44,40 +54,51 @@ public class SpecSettingsForm implements Disposable {
         return specTemplate;
     }
 
-    public void setSpecTemplate(String specTemplate) {
-        if (myEditor != null && !myEditor.isDisposed()) {
+    public void setSpecTemplate(String specTemplate)
+    {
+        if (myEditor != null && !myEditor.isDisposed())
+        {
             ApplicationManager.getApplication().runWriteAction(() -> myEditor.getDocument().setText(specTemplate));
         }
     }
 
     @Override
-    public void dispose() {
-        if (myEditor != null && !myEditor.isDisposed()) {
+    public void dispose()
+    {
+        if (myEditor != null && !myEditor.isDisposed())
+        {
             EditorFactory.getInstance().releaseEditor(myEditor);
         }
         myEditor = null;
     }
 
-    private void createUIComponents() {
+    private void createUIComponents()
+    {
         myEditorPanel = new JPanel(new BorderLayout());
-
+        this.lblSpecPath = new JLabel();
+        this.lblSourcePath = new JLabel();
+        this.testSpecTextField = new JTextField();
+        this.sourcePathTextfield=new JTextField();
         myEditor = createEditor();
         myEditorPanel.add(myEditor.getComponent(), BorderLayout.CENTER);
     }
 
     @NotNull
-    private static Editor createEditor() {
+    private static Editor createEditor()
+    {
         EditorFactory editorFactory = EditorFactory.getInstance();
         Document editorDocument = editorFactory.createDocument("");
-        EditorEx editor = (EditorEx)editorFactory.createEditor(editorDocument);
+        EditorEx editor = (EditorEx) editorFactory.createEditor(editorDocument);
         fillEditorSettings(editor.getSettings());
         setHighlighting(editor);
         return editor;
     }
 
-    private static void setHighlighting(EditorEx editor) {
+    private static void setHighlighting(EditorEx editor)
+    {
         final FileType tsFileType = FileTypeManager.getInstance().getFileTypeByExtension("ts");
-        if (tsFileType == UnknownFileType.INSTANCE) {
+        if (tsFileType == UnknownFileType.INSTANCE)
+        {
             return;
         }
         final EditorHighlighter editorHighlighter =
@@ -85,7 +106,8 @@ public class SpecSettingsForm implements Disposable {
         editor.setHighlighter(editorHighlighter);
     }
 
-    private static void fillEditorSettings(final EditorSettings editorSettings) {
+    private static void fillEditorSettings(final EditorSettings editorSettings)
+    {
         editorSettings.setWhitespacesShown(false);
         editorSettings.setLineMarkerAreaShown(true);
         editorSettings.setIndentGuidesShown(true);
@@ -94,6 +116,27 @@ public class SpecSettingsForm implements Disposable {
         editorSettings.setAdditionalColumnsCount(1);
         editorSettings.setAdditionalLinesCount(1);
         editorSettings.setUseSoftWraps(false);
+    }
+
+    public String getSpecPath()
+    {
+        return this.testSpecTextField.getText();
+    }
+
+
+    public void setSpecPath(String value)
+    {
+        this.testSpecTextField.setText(value);
+    }
+
+    public String getSourcePath()
+    {
+        return this.sourcePathTextfield.getText();
+    }
+
+    public void setSourcePath(String value)
+    {
+        this.sourcePathTextfield.setText(value);
     }
 
 }

@@ -1,14 +1,22 @@
 <idea-plugin version="2">
-  <id>eu.ydp.idea.tsSpecGenerator</id>
-  <name>TypeScript spec file generator / navigator</name>
-  <version>0.2</version>
-  <vendor email="mstocki@ydp.eu" url="http://www.ydp.eu">Young Digital Planet</vendor>
+    <id>eu.ydp.idea.tsSpecGenerator</id>
+    <name>TypeScript spec file generator / navigator</name>
+    <version>0.3</version>
+    <vendor email="mstocki@ydp.eu" url="http://www.ydp.eu">Young Digital Planet</vendor>
 
-  <description><![CDATA[
+    <description><![CDATA[
       TypeScript test file generator / navigator.
     ]]></description>
 
-  <change-notes><![CDATA[
+    <change-notes><![CDATA[
+      <strong>0.3</strong>
+      <ul>
+      <li>Source and Spec Path now configurable</li>
+      <li>File and Directory creation now done via jetbrains api</li>
+      <li>File processing now system independent</li>
+      <li></li>
+      </ul>
+      
       <strong>0.2</strong>
       <ul>
       <li>Introducing a settings panel</li>
@@ -23,36 +31,36 @@
       <li>Navigation to class file if the action used in a spec file</li>
       </ul>
     ]]>
-  </change-notes>
+    </change-notes>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-  <idea-version since-build="139.0"/>
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="139.0"/>
 
-  <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
-       on how to target different products -->
-  <!-- uncomment to enable plugin in all products
-  <depends>com.intellij.modules.lang</depends>
-  -->
-  <depends>com.intellij.modules.lang</depends>
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <!-- uncomment to enable plugin in all products
+    <depends>com.intellij.modules.lang</depends>
+    -->
+    <depends>com.intellij.modules.lang</depends>
 
-  <extensionPoints>
-    <extensionPoint name="projectConfigurable" interface="com.intellij.openapi.options.Configurable">
-    </extensionPoint>
-  </extensionPoints>
+    <extensionPoints>
+        <extensionPoint name="projectConfigurable" interface="com.intellij.openapi.options.Configurable">
+        </extensionPoint>
+    </extensionPoints>
 
-  <extensions defaultExtensionNs="com.intellij">
-    <projectConfigurable
-            groupId="language"
-            instance="eu.ydp.idea.ts.spec.generator.settings.SpecSettings">
-    </projectConfigurable>
-  </extensions>
+    <extensions defaultExtensionNs="com.intellij">
+        <projectConfigurable
+                groupId="language"
+                instance="eu.ydp.idea.ts.spec.generator.settings.SpecSettings">
+        </projectConfigurable>
+    </extensions>
 
-  <actions>
-    <!-- Add your actions here -->
-    <action id="tsGenerateSpec" class="eu.ydp.idea.ts.spec.generator.actions.GenerateSpecAction" text="Generate or navigate to spec file"
-            description="Generates spec file for ts class">
-      <add-to-group group-id="CodeMenu" anchor="last"/>
-    </action>
-  </actions>
+    <actions>
+        <!-- Add your actions here -->
+        <action id="tsGenerateSpec" class="eu.ydp.idea.ts.spec.generator.actions.GenerateSpecAction" text="Generate or navigate to spec file"
+                description="Generates spec file for ts class">
+            <add-to-group group-id="CodeMenu" anchor="last"/>
+        </action>
+    </actions>
 
 </idea-plugin>

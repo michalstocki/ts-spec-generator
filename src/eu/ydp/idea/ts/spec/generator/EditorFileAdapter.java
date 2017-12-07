@@ -1,6 +1,7 @@
 package eu.ydp.idea.ts.spec.generator;
 
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 
 public class EditorFileAdapter {
@@ -12,7 +13,7 @@ public class EditorFileAdapter {
         this.psiFile = psiFile;
     }
 
-    public String getFilePath() {
-        return psiFile.getVirtualFile().getPath();
+    public VirtualFile getFile() {
+        return psiFile.getVirtualFile();
     }
 }
