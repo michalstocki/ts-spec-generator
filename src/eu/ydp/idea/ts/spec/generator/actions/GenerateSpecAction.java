@@ -6,56 +6,88 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import eu.ydp.idea.ts.spec.generator.*;
+import eu.ydp.idea.ts.spec.generator.EditorFileAdapter;
+import eu.ydp.idea.ts.spec.generator.EditorFileNavigator;
+import eu.ydp.idea.ts.spec.generator.FileChildCreator;
+import eu.ydp.idea.ts.spec.generator.FilePathValidator;
+import eu.ydp.idea.ts.spec.generator.FileUtils;
+import eu.ydp.idea.ts.spec.generator.ProjectPathsProvider;
+import eu.ydp.idea.ts.spec.generator.SpecGenerator;
 
-import java.io.File;
+import java.io.IOException;
 
-public class GenerateSpecAction extends AnAction {
+public class GenerateSpecAction extends AnAction
+{
     @Override
-    public void actionPerformed(AnActionEvent e) {
-        Project project = e.getProject();
-        ProjectPathsProvider projectPathsProvider = new ProjectPathsProvider(project);
-        EditorFileAdapter editorFileAdapter = new EditorFileAdapter(project, e.getData(LangDataKeys.PSI_FILE));
-        EditorFileNavigator editorFileNavigator = new EditorFileNavigator(project);
-        FilePathValidator filePathValidator = new FilePathValidator(projectPathsProvider.getSourcePath());
-        boolean isTSFile = filePathValidator.isTSFile(editorFileAdapter.getFilePath());
-        boolean isInSourcePath = filePathValidator.isInSourcePath(editorFileAdapter.getFilePath());
-        String editorFilePath = editorFileAdapter.getFilePath();
-        String specPath = projectPathsProvider.getSpecPath();
-        String sourcePath = projectPathsProvider.getSourcePath();
-        if (isTSFile && isInSourcePath) {
-            String editorFileRelativePath = editorFilePath.substring(sourcePath.length());
-            String targetSpecFilePath = specPath + editorFileRelativePath;
-            targetSpecFilePath = targetSpecFilePath.substring(0, targetSpecFilePath.length() - 3) + ".spec.ts";
-            File specFile = new File(targetSpecFilePath);
-            if (!specFile.exists()) {
-                (new File(specFile.getParent())).mkdirs();
-                if (new SpecGenerator(project).generate(specFile, editorFileRelativePath)) {
-                    VirtualFileManager.getInstance().syncRefresh();
-                    editorFileNavigator.navigateTo(targetSpecFilePath);
+    public void actionPerformed(AnActionEvent e)
+    {
+        try
+        {
+            Project project = e.getProject();
+            ProjectPathsProvider projectPathsProvider = new ProjectPathsProvider(project);
+            EditorFileAdapter editorFileAdapter = new EditorFileAdapter(project, e.getData(LangDataKeys.PSI_FILE));
+            EditorFileNavigator editorFileNavigator = new EditorFileNavigator(project);
+            FilePathValidator filePathValidator = new FilePathValidator(projectPathsProvider.getSourcePath());
+            boolean isTSFile = filePathValidator.isTSFile(editorFileAdapter.getFile());
+            boolean isInSourcePath = filePathValidator.isInSourcePath(editorFileAdapter.getFile());
+            VirtualFile editorFilePath = editorFileAdapter.getFile();
+            VirtualFile specPath = projectPathsProvider.getSpecPath();
+            VirtualFile sourcePath = projectPathsProvider.getSourcePath();
+            if (isTSFile && isInSourcePath)
+            {
+                String editorFileRelativePath = editorFilePath.getParent().getCanonicalPath().substring(sourcePath.getCanonicalPath().length());
+                VirtualFile targetSpecFilePath = FileUtils.ensurePathExists(specPath, editorFileRelativePath);
+                String srcfileName = editorFilePath.getNameWithoutExtension() + ".spec.ts";
+                VirtualFile testSpecFile = targetSpecFilePath.findFileByRelativePath(srcfileName);
+
+                if (testSpecFile == null)
+                {
+                    FileChildCreator fileChildCreator = new FileChildCreator();
+                    VirtualFile testSpecFileToGenerate = fileChildCreator.createFileChild(targetSpecFilePath, srcfileName);
+                    SpecGenerator specGenerator = new SpecGenerator(project);
+                    specGenerator.generateAndNavigateTo(editorFilePath, editorFileRelativePath, testSpecFileToGenerate, editorFileNavigator);
+
                 }
-            } else {
-                editorFileNavigator.navigateTo(targetSpecFilePath);
+                else
+                {
+                    editorFileNavigator.navigateTo(testSpecFile);
+                }
             }
-        } else if (editorFilePath.substring(editorFilePath.length() - 8).equals(".spec.ts") && editorFilePath.indexOf(specPath) == 0) {
-            String editorFileRelativePath = editorFilePath.substring(specPath.length());
-            String targetSourceFilePath = sourcePath + editorFileRelativePath.substring(0, editorFileRelativePath.length() - 8) + ".ts";
-            File sourceFile = new File(targetSourceFilePath);
-            if (sourceFile.exists()) {
-                editorFileNavigator.navigateTo(targetSourceFilePath);
+            else if (editorFilePath.getCanonicalPath().toLowerCase().trim().endsWith(".spec.ts") && editorFilePath.getCanonicalPath().indexOf(specPath.getCanonicalPath()) == 0)
+            {
+                String editorFileRelativePath = editorFilePath.getParent().getCanonicalPath().substring(specPath.getCanonicalPath().length());
+                VirtualFile targetSourceFileDirectoryPath = sourcePath.findFileByRelativePath(editorFileRelativePath);
+                String nameWithoutExtension = editorFilePath.getNameWithoutExtension();
+                if (nameWithoutExtension.toLowerCase().endsWith(".spec"))
+                {
+                    nameWithoutExtension = nameWithoutExtension.substring(0, nameWithoutExtension.length() - 5);
+                    VirtualFile targetSourceFilePath = targetSourceFileDirectoryPath.findFileByRelativePath(nameWithoutExtension + ".ts");
+                    if (targetSourceFilePath != null)
+                    {
+                        editorFileNavigator.navigateTo(targetSourceFilePath);
+                    }
+                }
             }
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
         }
     }
 
     @Override
-    public void update(AnActionEvent e) {
+    public void update(AnActionEvent e)
+    {
         PsiFile currentEditorPsiFile = e.getData(LangDataKeys.PSI_FILE);
         Editor editor = e.getData(PlatformDataKeys.EDITOR);
-        if (currentEditorPsiFile == null || editor == null) {
+        if (currentEditorPsiFile == null || editor == null)
+        {
             e.getPresentation().setEnabled(false);
-        } else {
+        }
+        else
+        {
             e.getPresentation().setEnabled(true);
         }
     }

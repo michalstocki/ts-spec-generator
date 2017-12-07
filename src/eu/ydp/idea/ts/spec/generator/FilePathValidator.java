@@ -1,17 +1,24 @@
 package eu.ydp.idea.ts.spec.generator;
 
-public class FilePathValidator {
-    private String sourcePath;
+import com.intellij.openapi.vfs.VirtualFile;
 
-    public FilePathValidator(String sourcePath) {
+public class FilePathValidator
+{
+    private VirtualFile sourcePath;
+
+    public FilePathValidator(VirtualFile sourcePath)
+    {
         this.sourcePath = sourcePath;
     }
 
-    public boolean isTSFile(String filePath) {
-        return filePath.substring(filePath.length() - 3).equals(".ts");
+    public boolean isTSFile(VirtualFile filePath)
+    {
+        return "ts".equals(filePath.getExtension());
     }
 
-    public boolean isInSourcePath(String filePath) {
-        return filePath.indexOf(sourcePath) == 0;
+    public boolean isInSourcePath(VirtualFile filePath)
+    {
+        String canonicalPath = filePath.getCanonicalPath();
+        return canonicalPath.indexOf(sourcePath.getCanonicalPath()) == 0;
     }
 }
